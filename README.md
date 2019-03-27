@@ -24,13 +24,12 @@ Custom playlists are located in:
 * `/data/favourites/radio-favourites` (*Favorite Radios*)
 
 # Assumptions
-* Assumes that ssh authorized key is configured on Volumio system 
-    * Reference https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md
+* Assumes that [ssh authorized keys](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) is configured on Volumio system 
 * Assuming proper formatting:
     * Weblinks contain `http://` or `https://`
     * [EXTINF](https://en.wikipedia.org/wiki/M3U#Extended_M3U) is structured:
         * `#EXTINF:length,Artist Name - Track Title` 
-        or
+        `or`
         * `#EXTINF:length,Title`
 * Non-weblinks will be considered filelinks
 * In regular (non-EXT) m3u:
@@ -42,7 +41,6 @@ Custom playlists are located in:
 # Examples
 
 ## Webradio
-
 **./m3u2volumio web-radio.m3u**
 ```
 #EXTM3U
@@ -54,7 +52,6 @@ http://play2.organlive.com:7000/320
 http://stream.klassikradio.de/purebach/mp3-192/stream.klassikradio.de/
 ```
 Results in the following output being placed in `/data/favourites/radio-favourites` file.
-
 ```
 [{"service":"webradio","name":"RadioParadise -- 320k","name":"RadioParadise -- 320k","uri":"http://stream-uk1.radioparadise.com/aac-320"},
 {"service":"webradio","name":"OrganLive","name":"OrganLive","uri":"http://play2.organlive.com:7000/320"},
@@ -62,7 +59,6 @@ Results in the following output being placed in `/data/favourites/radio-favourit
 ```
 
 ## Files
-
 # Example 1 - with EXT tags
 **./m3u2volumio example1.m3u**
 ```
@@ -77,7 +73,6 @@ Results in the following output being placed in the `/data/favourites/Example` f
 ```
 [{"service":"mpd","title":"Sample title","artist":"Sample artist","uri":"mnt/NAS/Sample.mp3"},
 {"service":"mpd","title":"Example title","artist":"Example Artist","uri":"mnt/NAS/path/Greatest Hits/Example.ogg"}]
-
 ```
 
 # Example 2 - without EXT tags
@@ -87,9 +82,7 @@ Sample.mp3
 Greatest Hits\Example.ogg
 ```
 Results in the following output being placed in the `/data/favourites/Example` file.
-
 ```
 [{"service":"mpd","title":"Sample title","artist":"Sample artist","uri":"mnt/NAS/Sample.mp3"},
 {"service":"mpd","title":"Example title","artist":"Example Artist","uri":"mnt/NAS/path/Greatest Hits/Example.ogg"}]
-
 ```
