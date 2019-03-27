@@ -29,7 +29,8 @@ Custom playlists are located in:
 * Assuming proper formatting:
     * Weblinks contain `http://` or `https://`
     * [EXTINF](https://en.wikipedia.org/wiki/M3U#Extended_M3U) is structured:
-        * `#EXTINF:length,Artist Name - Track Title` or
+        * `#EXTINF:length,Artist Name - Track Title` 
+        or
         * `#EXTINF:length,Title`
 * Non-weblinks will be considered filelinks
 * In regular (non-EXT) m3u:
@@ -71,7 +72,7 @@ Sample.mp3
 #EXTINF:321,Example Artist - Example title
 Greatest Hits\Example.ogg
 ```
-Results in the following output being placed in the `/data/favourites/Exampe` file.
+Results in the following output being placed in the `/data/favourites/Example` file.
 
 ```
 [{"service":"mpd","title":"Sample title","artist":"Sample artist","uri":"mnt/NAS/Sample.mp3"},
@@ -79,13 +80,13 @@ Results in the following output being placed in the `/data/favourites/Exampe` fi
 
 ```
 
-# Example 2 - without EXT tags**
+# Example 2 - without EXT tags
 **./m3u2volumio example1.m3u**
 ```
 Sample.mp3
 Greatest Hits\Example.ogg
 ```
-Results in the following output being placed in the `/data/favourites/Exampe` file.
+Results in the following output being placed in the `/data/favourites/Example` file.
 
 ```
 [{"service":"mpd","title":"Sample title","artist":"Sample artist","uri":"mnt/NAS/Sample.mp3"},
