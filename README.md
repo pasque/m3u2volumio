@@ -1,11 +1,12 @@
 # m3u2volumio
-Translate .[m3u](https://en.wikipedia.org/wiki/M3U#Extended_M3U) files into a [Volumio](https://volumio.org/) conform playlist. The intervention requires SSH.
+Translate .[m3u](https://en.wikipedia.org/wiki/M3U#Extended_M3U) files into a [Volumio](https://volumio.org/) conform playlist. 
 
 # Version
-0.2
+0.3
 
 # Dependencies
 * `python3 >= 3.1`
+* `paramiko`
 
 # Usage
 `./m3u2volumio <filename.m3u>`
@@ -15,15 +16,16 @@ Translate .[m3u](https://en.wikipedia.org/wiki/M3U#Extended_M3U) files into a [V
 -h, --help
 -v, --version
 ```
+`Edit user environmental variables in m3u2volumio before running.`
 
 Custom playlists are located in:
-
-* `/data/playlist` (custom playlists)
+* `/data/playlist/` (custom playlists)
 * `/data/favourites/my-web-radio` (*My Web Radios*)
 * `/data/favourites/radio-favourites` (*Favorite Radios*)
 
 # Assumptions
-
+* Assumes that ssh authorized key is configured on Volumio system 
+    * Reference https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md
 * Assuming proper formatting:
     * Weblinks contain `http://` or `https://`
     * [EXTINF](https://en.wikipedia.org/wiki/M3U#Extended_M3U) is structured:
@@ -33,13 +35,14 @@ Custom playlists are located in:
 * In regular (non-EXT) m3u:
     * If the filename contains a single '-', it will be considered as `artist - title` formatting
     * Otherwise the extention will be removed and the filename taken as title
+* Existing playlists and radio-favourites files will overwritten
 
 
-# Example
+# Examples
 
 ## Webradio
 
-**test.m3u**
+**./m3u2volumio web-radio.m3u**
 ```
 #EXTM3U
 #EXTINF:-1,RadioParadise -- 320k
@@ -49,55 +52,43 @@ http://play2.organlive.com:7000/320
 #EXTINF:-1,KlassikRadio - Pure Bach
 http://stream.klassikradio.de/purebach/mp3-192/stream.klassikradio.de/
 ```
-
-Webradio playlist lies in `/data/favourites/my-web-radio`. Hence copy the following output into the file.
+Results in the following output being placed in `/data/favourites/radio-favourites` file.
 
 ```
-$ m3u2volumio test.m3u 
-[{"service":"webradio","name":"RadioParadise -- 320k","uri":"http://stream-uk1.radioparadise.com/aac-320"},{"service":"webradio","name":"OrganLive","uri":"http://play2.organlive.com:7000/320"},{"service":"webradio","name":"KlassikRadio - Pure Bach","uri":"http://stream.klassikradio.de/purebach/mp3-192/stream.klassikradio.de/"}]
+[{"service":"webradio","name":"RadioParadise -- 320k","name":"RadioParadise -- 320k","uri":"http://stream-uk1.radioparadise.com/aac-320"},
+{"service":"webradio","name":"OrganLive","name":"OrganLive","uri":"http://play2.organlive.com:7000/320"},
+{"service":"webradio","name":"KlassikRadio - Pure Bach","name":"KlassikRadio - Pure Bach","uri":"http://stream.klassikradio.de/purebach/mp3-192/stream.klassikradio.de/"}]
 ```
 
 ## Files
 
-[**Example 3**](https://en.wikipedia.org/wiki/M3U#Examples)
+# Example 1 - with EXT tags
+**./m3u2volumio example1.m3u**
 ```
 #EXTM3U
-
 #EXTINF:123, Sample artist - Sample title
 Sample.mp3
-
 #EXTINF:321,Example Artist - Example title
 Greatest Hits\Example.ogg
 ```
-
-Results in:
-
-```
-$ m3u2volumio example3.m3u
-[{"service":"mpd","title":"Sample title","artist":"Sample artist","uri":"Sample.mp3"},{"service":"mpd","title":"Example title","artist":"Example Artist","uri":"Greatest Hits\Example.ogg"}]
-```
-
-Create new file `/data/playlist/playlistname` and copy the output there or directly by typing:
+Results in the following output being placed in the `/data/favourites/Exampe` file.
 
 ```
-$ m3u2volumio filename.m3u | ssh volumio@volumiocomputer 'cat > /data/playlist/newplaylistname'
-```
-
-[**Example 4**](https://en.wikipedia.org/wiki/M3U#Examples)
-
-*Bad formatting! Just a technical example! Use absolute paths!*
+[{"service":"mpd","title":"Sample title","artist":"Sample artist","uri":"mnt/NAS/Sample.mp3"},
+{"service":"mpd","title":"Example title","artist":"Example Artist","uri":"mnt/NAS/path/Greatest Hits/Example.ogg"}]
 
 ```
-Alternative/Band - Song.mp3
-Classical/Other Band - New Song.mp3
-Stuff.mp3
-D:/More Music/Foo.mp3
-../Other Music/Bar.mp3
-http://emp.cx:8000/Listen.pls
-http://www.example.com/~user/Mine.mp3
+
+# Example 2 - without EXT tags**
+**./m3u2volumio example1.m3u**
 ```
+Sample.mp3
+Greatest Hits\Example.ogg
+```
+Results in the following output being placed in the `/data/favourites/Exampe` file.
 
 ```
-$ m3u2volumio example4.m3u
-[{"service":"mpd","title":"Song","artist":"Band","uri":"Alternative/Band - Song.mp3"},{"service":"mpd","title":"New Song","artist":"Other Band","uri":"Classical/Other Band - New Song.mp3"},{"service":"mpd","title":"Stuff","uri":"Stuff.mp3"},{"service":"mpd","title":"Foo","uri":"D:/More Music/Foo.mp3"},{"service":"mpd","title":"Bar","uri":"../Other Music/Bar.mp3"},{"service":"webradio","name":"Listen.pls","uri":"http://emp.cx:8000/Listen.pls"},{"service":"webradio","name":"Mine.mp3","uri":"http://www.example.com/~user/Mine.mp3"}]
+[{"service":"mpd","title":"Sample title","artist":"Sample artist","uri":"mnt/NAS/Sample.mp3"},
+{"service":"mpd","title":"Example title","artist":"Example Artist","uri":"mnt/NAS/path/Greatest Hits/Example.ogg"}]
+
 ```
