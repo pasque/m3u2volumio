@@ -4,8 +4,8 @@
 ### User Environmental Settings ~~~~~~~~~~
 
 vmusic_path='mnt/NAS/MusicShare/'	# Path of the music files as seen from the Volumio server including the Alias (must be same for all Volumio systems and no leading /)
-lmusic_path='/media/MusicShare/'	# Path of the music files as seen from the local system
-vservers='garage-music, living-music' # List of Volumio servers [IP of Server Name] to upload the playlist
+lmusic_path='D:\Music\iTunes\iTunes Media\Music\\'	# Path of the music files as seen from the local system here it is a Windows system so we also have to replace \ with / later
+vservers='garage' # List of Volumio servers [IP of Server Name] to upload the playlist separated by commas
 vuser='volumio' # Volumio username for SSH login (assumes that ssh authorized key is configured on Volumio system (reference https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md)
 vpl_www_file='my-web-radio' # File name of the web radio favourite list; options 'my-web-radio' (My Web Radios) or 'radio-favourites' (Favorite Radios)
 
@@ -31,6 +31,7 @@ changelog = {}
 changelog[0.1] = "First Release"
 changelog[0.2] = "Added handling for non-ascii characters and changelog"
 changelog[0.3] = "Added stdout messaging control\n\t Added feature to upload the playlist to Volumio server(s) via SSH\n\t Added function to replace local path with Volumio path\n\t Fixed Web Radio Favourites format\n\t Supports UTF-8 encoded file names"
+changelog[0.4] = "Added replace for changing \ to / given difference between Windows naming and NAS naming and made permanent change in artist - title naming for itunes playlists"
 
 
 ### Defined Functions ~~~~~~~~~~
@@ -146,8 +147,8 @@ if __name__ == "__main__":
 
 		else:
 			if '-' in key and key.count('-') == 1:
-				artist = key.split('-')[0].strip()
-				title = key.split('-')[1].strip()
+				artist = key.split('-')[1].strip()
+				title = key.split('-')[0].strip()
 
 				# Removing file extension from Artist - Title string
 				title_temp = '.'.join(title.split('.')[:-1])
@@ -155,7 +156,7 @@ if __name__ == "__main__":
 					title = title_temp
                 
 				# Changing the local path to the volumio path
-				uri = data[key].replace(lmusic_path, vmusic_path, 1)
+				uri = data[key].replace(lmusic_path, vmusic_path, 1).replace('\\', '/')
 				output.append('{' + '"service":"mpd","title":"' + title + '","artist":"' + artist + '","uri":"' + uri + '"}')
 
 			else:
@@ -165,7 +166,7 @@ if __name__ == "__main__":
 					title = title_temp
 
 				# Changing the local path to the volumio path
-				uri = data[key].replace(lmusic_path, vmusic_path, 1)
+				uri = data[key].replace(lmusic_path, vmusic_path, 1).replace('\\', '/')
 				output.append('{' + '"service":"mpd","title":"' + title + '","uri":"' + uri + '"}')
 			
 ## Uploading Volumio formatted playlist to Volumio server(s) ~~~~

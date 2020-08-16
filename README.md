@@ -1,8 +1,8 @@
 # m3u2volumio
-Translate .[m3u](https://en.wikipedia.org/wiki/M3U#Extended_M3U) files into a [Volumio](https://volumio.org/) conform playlist. 
+Translate Windows iTunes .[m3u](https://en.wikipedia.org/wiki/M3U#Extended_M3U) files into a [Volumio](https://volumio.org/) conform playlist. 
 
 # Version
-0.3
+0.4
 
 # Dependencies
 * `python3 >= 3.1`
@@ -36,7 +36,7 @@ Custom playlists are located in:
     * If the filename contains a single '-', it will be considered as `artist - title` formatting
     * Otherwise the extention will be removed and the filename taken as title
 * Existing playlists and radio-favourites files will overwritten
-
+*Comes from Windows filesystem and from iTunes m3u playlists only
 
 # Examples
 
